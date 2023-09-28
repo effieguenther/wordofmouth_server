@@ -1,0 +1,159 @@
+[
+    {
+        "title": "salon",
+        "image": "",
+        "description": "Get Professional Beauty Services at Home. Anywhere, Anytime, Home Salon and SPA at Your Doorstep.",
+        "featured": true,
+        "sort_order": 1,
+        "sub_service": [
+            {
+                "title": "massage",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 1
+            },
+            {
+                "title": "hair",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 2
+            },
+            {
+                "title": "nail",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 3
+            },
+            {
+                "title": "wax/thread",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 4
+            },
+            {
+                "title": "wax/thread",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 5
+            }
+        ]
+    },
+    {
+        "title": "artisan",
+        "image": "",
+        "description": "Get professional artisans who are experts in the field of art at your doorstep.",
+        "featured": false,
+        "sort_order": 2,
+        "sub_service": [
+            {
+                "title": "carpentry",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 1
+            },
+            {
+                "title": "masonry",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 2
+            },
+            {
+                "title": "gardening",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 3
+            }
+        ]
+    },
+    {
+        "title": "home repair",
+        "image": "",
+        "description": "Get professional handyman at your doorstep.",
+        "featured": true,
+        "sort_order": 3,
+        "sub_service": [
+            {
+                "title": "plumbing",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 1
+            },
+            {
+                "title": "electric",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 2
+            },
+            {
+                "title": "construction",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 3
+            }
+        ]
+    },
+    {
+        "title": "home help",
+        "image": "",
+        "description": "Now book the best affordable, simple and convenient house cleaning service.",
+        "featured": true,
+        "sort_order": 4,
+        "sub_service": [
+            {
+                "title": "cleaning",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 1
+            },
+            {
+                "title": "cooking",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 2
+            },
+            {
+                "title": "child care",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 3
+            },
+            {
+                "title": "pet care",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 4
+            }
+        ]
+    },
+    {
+        "title": "driving",
+        "image": "",
+        "description": "Need to travel, need a driver, no problem you can find them just a click away.",
+        "featured": false,
+        "sort_order": 5,
+        "sub_service": [
+            {
+                "title": "driving",
+                "image": "",
+                "description": "",
+                "featured": false,
+                "sort_order": 1
+            }
+        ]
+    }
+]

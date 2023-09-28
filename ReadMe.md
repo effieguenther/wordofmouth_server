@@ -91,3 +91,15 @@ ALL RETURNS ARE IN JSON FORMAT
         - if approved, to_id is added to from_id's contacts and vice versa
         - returns the to_id user, from_id user, and the updated request
 
+/services
+    - GET
+        - provide filter_featured in body
+        - returns an array of services with its subservices
+
+/services/:serviceId
+    - GET
+        - returns a service with its subservices for the given service Id
+
+/services/:serviceId/subservice
+    - GET
+        - returns the sub services for the given service Id
