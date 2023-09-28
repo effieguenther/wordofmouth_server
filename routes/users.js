@@ -1,9 +1,35 @@
 var express = require('express');
-var router = express.Router();
+const User = require('../models/user');
+var userRouter = express.Router();
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+userRouter.route('/')
+  .get((req, res, next) => {
+    User.find()
+      .then(users => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain');
+        res.json(users);
+      })
+      .catch(err => next(err))
+  })
+  .post((req, res, next) => {
+    User.create(req.body)
+      .then((user) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain');
+        res.json(user);
+      })
+      .catch(err => next(err))
+  })
 
-module.exports = router;
+userRouter.route('/:userId')
+  .get((req, res, next) => {
+    User.findById(req.params.userId)
+    .then(user=>{
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/plain');
+      res.json(user);
+    })
+    .catch(err => next(err))
+  })
+module.exports = userRouter;

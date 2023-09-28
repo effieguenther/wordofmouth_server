@@ -20,7 +20,7 @@ const userSchema = new Schema({
         required: true
     },
     authentication_method: {
-        type: Number,
+        type: String,
         enum:["google", "email-password"],
         required: true
     },
@@ -40,7 +40,7 @@ const userSchema = new Schema({
         default:false
     },
     status:{
-        type:Boolean,
+        type:String,
         enum: ["Active", "Inactive", "Dormant"],
         default: "Active",
         required:true
