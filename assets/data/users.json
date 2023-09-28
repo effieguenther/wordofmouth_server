@@ -1,0 +1,178 @@
+[
+    {
+      "first_name": "Anish",
+      "last_name": "Devi",
+      "email": "joshi.sujata@basyal.com",
+      "password": "e4990e01",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Aadarsh",
+      "last_name": "Das",
+      "email": "adhikari.krishna@lama.org.np",
+      "password": "99070277",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Ayush",
+      "last_name": "Goit",
+      "email": "bhandari.roshni@bastakoti.com",
+      "password": "19008891",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Subash",
+      "last_name": "Ranjit",
+      "email": "baral.sampada@gmail.com",
+      "password": "d8ae8fd5",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Laxman",
+      "last_name": "Pandey",
+      "email": "regmi.aayusha@jha.com.np",
+      "password": "8b924889",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Nikita",
+      "last_name": "Purbachhane",
+      "email": "bimal.devkota@sarraf.net.np",
+      "password": "08cfcd56",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Sujal",
+      "last_name": "Sudhi",
+      "email": "asha11@basyal.com",
+      "password": "25355eb4",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Balaram",
+      "last_name": "Yakami",
+      "email": "radha.bohara@dahal.com.np",
+      "password": "c17b5640",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Abhinatha",
+      "last_name": "Aley",
+      "email": "cnemkul@thapamagar.com",
+      "password": "2c1a2537",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Pratiyusha",
+      "last_name": "Khadgi",
+      "email": "skhanal@ghimire.org",
+      "password": "6e1941c7",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Jyoti",
+      "last_name": "Chhetri",
+      "email": "simran.tuladhar@bhusal.net",
+      "password": "8ef28200",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Dipali",
+      "last_name": "Tamang",
+      "email": "junu.chamling@ligal.org.np",
+      "password": "ea1d0f12",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Jyotsana",
+      "last_name": "Pun",
+      "email": "radha16@yahoo.com",
+      "password": "cee5126f",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Divya",
+      "last_name": "Phounja",
+      "email": "ayush42@balami.net",
+      "password": "20d7c220",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Namrata",
+      "last_name": "Shakya",
+      "email": "panta.priya@rauniyar.com",
+      "password": "0f965f95",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    },
+    {
+      "first_name": "Megha",
+      "last_name": "Dhana",
+      "email": "apeksha.rana@gmail.com",
+      "password": "b3cce274",
+      "authentication_method": "email-password",
+      "is_admin": false,
+      "is_worker": true,
+      "is_verified": true,
+      "status": "Active"
+    }
+   ]
