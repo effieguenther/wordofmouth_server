@@ -18,8 +18,10 @@ const profileSchema = new Schema({
     services: [{ type: Schema.Types.ObjectId, ref: "Service" }],
     contacts: [{ type: Schema.Types.ObjectId, ref: "User" }],
     images: [{ type: String }],
-    profile_pic: String,
-    phone: String
+    profile_pic: {type: String, default: ''},
+    phone: {type: String, required: true},
+    gender: {type: String, default: 'unspecified'}
+
 }, {
     timestamps: true
 });
