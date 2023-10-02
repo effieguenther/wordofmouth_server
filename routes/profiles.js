@@ -22,10 +22,19 @@ profileRouter.route('/')
             })
             .catch(err => next(err))
     })
+// .delete((req, res, next) => {
+//     Profile.deleteMany()
+//         .then(response => {
+//             res.statusCode = 200;
+//             res.setHeader('Content-Type', 'text/plain');
+//             res.json(response);
+//         })
+//         .catch(err => next(err))
+// })
 
 profileRouter.route('/:userId')
     .get((req, res, next) => {
-        Profile.findOne({ user_id: req.params.userId })
+        Profile.findOne({ user: req.params.userId })
             .populate('services')
             .populate('contacts')
             .populate('address')
@@ -37,7 +46,7 @@ profileRouter.route('/:userId')
             .catch(err => next(err))
     })
     .put((req, res, next) => {
-        Profile.findOneAndUpdate({ user_id: req.params.userId },
+        Profile.findOneAndUpdate({ user: req.params.userId },
             { $set: req.body },
             { new: true })
             .then((profile) => {
