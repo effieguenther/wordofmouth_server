@@ -14,7 +14,7 @@ const addressSchema = new Schema({
 });
 
 const profileSchema = new Schema({
-    user_id: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
@@ -22,11 +22,13 @@ const profileSchema = new Schema({
     },
     first_name: {
         type: String,
-        required: true
+        required: true,
+        default:""
     },
     last_name: {
         type: String,
-        required: true
+        required: true,
+        default:""
     },
     is_worker:{
         type:Boolean,
