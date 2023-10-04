@@ -1,27 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const passportLocalMongoose = require('passport-local-mongoose');//import passport-local-mongoose
 
 const userSchema = new Schema({
-    first_name: {
-        type: String,
-        required: true
-    },
-    last_name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique:true
-    },
-    password: {
-        type: String,
-        required: true
-    },
     authentication_method: {
-        type: Number,
+        type: String,
         enum:["google", "email-password"],
+        default: "email-password",
         required: true
     },
     is_admin:{
@@ -29,25 +14,14 @@ const userSchema = new Schema({
         required:true,
         default:false
     },
-    is_worker:{
-        type:Boolean,
-        required:true,
-        default:false
-    },
-    is_verified:{
-        type:Boolean,
-        required:true,
-        default:false
-    },
     status:{
-        type:Boolean,
+        type:String,
         enum: ["Active", "Inactive", "Dormant"],
         default: "Active",
         required:true
     }
-}, {
-    timestamps: true
 });
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+userSchema.plugin(passportLocalMongoose);
+
+module.exports = mongoose.model('User', userSchema);

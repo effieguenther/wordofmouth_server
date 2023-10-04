@@ -14,12 +14,46 @@ const addressSchema = new Schema({
 });
 
 const profileSchema = new Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        unique: true
+    },
+    first_name: {
+        type: String,
+        required: true,
+        default:""
+    },
+    last_name: {
+        type: String,
+        required: true,
+        default:""
+    },
+    is_worker:{
+        type:Boolean,
+        required:true,
+        default:false
+    },
+    is_verified:{
+        type:Boolean,
+        required:true,
+        default:false
+    },
     address: addressSchema,
     services: [{ type: Schema.Types.ObjectId, ref: "Service" }],
     contacts: [{ type: Schema.Types.ObjectId, ref: "User" }],
     images: [{ type: String }],
-    profile_pic: String,
-    phone: String
+    profile_pic: {type: String, default: ''},
+    phone: {type: String},
+    gender: {type: String, default: 'unspecified'},
+    status:{
+        type:String,
+        enum: ["Active", "Inactive", "Dormant"],
+        default: "Active",
+        required:true
+    }
+
 }, {
     timestamps: true
 });
