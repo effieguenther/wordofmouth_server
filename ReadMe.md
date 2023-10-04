@@ -1,39 +1,49 @@
-**Features**
+## Features
 
 - login with Google
 - sending emails/texts to users
 
-**Schemas**
+## Schemas
 
 Service (services)
 - title
 - array of sub-services
 
 User (users)
-- first name
-- last name
-- authentication method
-- email
-- password
+- authentication_method
 - is_admin
-- is_worker
 - status
+- first_name
+- last_name
+
+- username (passport-local-mongoose)
+- password (passport-local-mongoose)
+
 - timestamps
 
 Profile (profiles)
 - user_id
-- services array
-- contacts array (user ids)
-- address *** schema
-- images
+- first_name
+- last_name
+- is_worker
+- is_verified
+- address (embedded schema)
+    - address_line_1
+    - address_line_2
+    - street
+    - city
+    - country_code
+    - latitude
+    - longitude
+- services (array of ids)
+- contacts (array of ids)
+- images (array of strings)
 - profile picture
 - phone number
-- timestamps
+- gender
+- status
 
-Address
-- address
-- latitude
-- longitude
+- timestamps
 
 Review (reviews)
 - author_id
@@ -49,57 +59,100 @@ Request (requests)
 - status
 - timestamps
 
-**Endpoints**
+## Endpoints
 
 ALL RETURNS ARE IN JSON FORMAT
 
-/reviews
-    - GET
-        - provide filter_author_id or filter_reviewed_user_id in body
-        - returns an array of reviews
-    - POST
-        - auth: current user must exist
-        - reviewed_user_id must exist in contacts of current user
-        - returns the created review
+### /users
+- GET
+    - auth: none
+    - body: { is_admin || status }
+    - if present in body, users are filtered by is_admin or status
+    - returns an array of users 
+- POST
+    - auth: none
+    - body: { user }
+    - returns a newly created user 
 
-/reviews/:reviewId
-    - GET
-        - returns the Review
-    - PUT 
-        - auth: author_id must = current user
-        - returns updated Review
-    - DELETE 
-        - auth: author_id must = current user
-        - returns status
+#### /users/:userId
+- GET
+    - auth: none
+    - body: {}
+    - returns the user
 
-/requests
-    - GET
-        - filter_to or filter_from in body
-        - returns array of Requests
-    - POST
-        - auth: current user must exist
-        - the the to_id must not already exist in the current user's contacts
-        - returns the created request
+#### /users/signup
+- POST
+    - auth: none
+    - body: { username: String, password: String, firstname: Srting, lastname: String }
+    - password is encrypted with passport-local-mongoose plugin
+    - user is created and saved
+    - profile is created from the new user and saved
+    - returns { success: true, user: user, profile: profile }
 
-/requests/:requestId
-    - GET
-        - returns the request
-    - PUT 
-        - only valid for 'status' property
-        - auth: current user must = to_id
-        - required in body: status ('approved' or 'declined')
-        - if approved, to_id is added to from_id's contacts and vice versa
-        - returns the to_id user, from_id user, and the updated request
+#### /users/login
+- POST
+    - auth: user exists
+    - body: {}
+    - returns: { success: true, token: token, status: 'You are successfully logged in!' }
 
-/services
-    - GET
-        - provide filter_featured in body
-        - returns an array of services with its subservices
+### /reviews
+- GET
+    - auth: none
+    - body: { filter_author_id || filter_reviewed_user_id }
+    - returns an array of reviews
+- POST
+    - auth: current user must exist
+    - body: { review }
+    - reviewed_user_id must exist in contacts of current user
+    - returns the created review
 
-/services/:serviceId
-    - GET
-        - returns a service with its subservices for the given service Id
+#### /reviews/:reviewId
+- GET
+    - auth: none
+    - body: {}
+    - returns the Review
+- PUT 
+    - auth: author_id must = current user
+    - body: { rating: Number || review_title: String || review_text: String }
+    - returns updated Review
+- DELETE 
+    - auth: author_id must = current user
+    - body: {}
+    - returns status
 
-/services/:serviceId/subservice
-    - GET
-        - returns the sub services for the given service Id
+### /requests
+- GET
+    - auth: current user must exist
+    - body: { filter_to || filter_from }
+    - returns array of Requests
+- POST
+    - auth: current user must exist
+    - body: { request }
+    - the the to_id must not already exist in the current user's contacts
+    - returns the created request
+
+#### /requests/:requestId
+- GET
+    - auth: none
+    - body: {}
+    - returns the request
+- PUT 
+    - auth: current user must = to_id
+    - body: { status } ('Approved' or 'Declined')
+    - if approved, to_id is added to from_id's contacts and vice versa
+    - returns the to_id user, from_id user, and the updated request
+    - if declined, nothing happens
+
+### /services
+- GET
+    - auth: none
+    - body: { filter_featured }
+    - returns an array of services with its subservices
+
+#### /services/:serviceId
+- GET
+    - returns a service with its subservices for the given service Id
+
+#### /services/:serviceId/subservice
+- GET
+    - returns the sub services for the given service Id

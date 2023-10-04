@@ -14,7 +14,7 @@ const addressSchema = new Schema({
 });
 
 const profileSchema = new Schema({
-    user: {
+    user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
