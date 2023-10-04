@@ -5,6 +5,7 @@ const passport = require('passport');
 const authenticate = require('../authenticate');
 var userRouter = express.Router();
 
+
 userRouter.route('/signup')
   .post((req, res, next) => {
     User.register(
@@ -60,24 +61,15 @@ userRouter.post('/login', passport.authenticate('local', { session: false }), (r
 });
 
 userRouter.route('/')
-  .get((req, res, next) => {
-    User.find()
-      .then(users => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        res.json(users);
-      })
-      .catch(err => next(err))
-  })
-  .post((req, res, next) => {
-    User.create(req.body)
-      .then((user) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        res.json(user);
-      })
-      .catch(err => next(err))
-  })
+  // .get((req, res, next) => {
+  //   User.find()
+  //     .then(users => {
+  //       res.statusCode = 200;
+  //       res.setHeader('Content-Type', 'text/plain');
+  //       res.json(users);
+  //     })
+  //     .catch(err => next(err))
+  // })
   // .delete((req, res, next) => {
   //   User.deleteMany()
   //     .then(response => {
@@ -98,4 +90,16 @@ userRouter.route('/:userId')
       })
       .catch(err => next(err))
   })
+  .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    // only admin can perform this action
+    User.findByIdAndUpdate(req.params.reviewId,{
+      status: "Inactive"
+    }, { new: true })
+    .then(response => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(response);
+    })
+    .catch(err => next(err));
+});
 module.exports = userRouter;
