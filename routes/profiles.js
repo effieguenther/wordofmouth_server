@@ -2,9 +2,19 @@ const express = require('express');
 const Profile = require('../models/profile');
 const profileRouter = express.Router();
 
+// extract any filters to be applied from the body of the request and construct query object
+const filter_query = (req) => {
+    const { filter_featured } = req.body;
+    let query = {};
+    if (filter_featured) {
+        query = { featured: filter_featured }
+    }
+    return query;
+}
 
 profileRouter.route('/')
     .get((req, res, next) => {
+        query = filter_query(req);
         Profile.find()
             .then(profiles => {
                 res.statusCode = 200;

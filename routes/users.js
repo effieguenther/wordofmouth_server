@@ -5,10 +5,11 @@ const passport = require('passport');
 const authenticate = require('../authenticate');
 var userRouter = express.Router();
 
+
 userRouter.route('/signup')
   .post((req, res, next) => {
     User.register(
-      new User({ username: req.body.username }),
+      new User({ username: req.body.username, is_admin: false }),
       req.body.password,
       async (err, user) => {
         if (err) {
@@ -18,7 +19,6 @@ userRouter.route('/signup')
           res.json({ err: err });
         } else {
           console.log(`User ${user._id} successfully created!`);
-          user.is_admin = false;// setting it again explicitly here so that no one should be able to set themselves as admin. Admin status we will always set manually from the backend
           try {
             const profileInfo = new Profile({
               user: user._id,
@@ -49,30 +49,30 @@ userRouter.post('/login', passport.authenticate('local', { session: false }), (r
 });
 
 userRouter.route('/')
-  .get( async (req, res, next) => {
-    const query = {}
-    const { status, is_admin } = req.body;
-    if (status)   { query.status = status     }
-    if (is_admin) { query.is_admin = is_admin }
+.get( async (req, res, next) => {
+  const query = {}
+  const { status, is_admin } = req.body;
+  if (status)   { query.status = status     }
+  if (is_admin) { query.is_admin = is_admin }
 
-    try {
-      const users = await User.find(query);
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/plain');
-      res.json(users);
-    } catch (err) {
-      next(err)
-    }
-  })
-  // .post((req, res, next) => {
-  //   User.create(req.body)
-  //     .then((user) => {
-  //       res.statusCode = 200;
-  //       res.setHeader('Content-Type', 'text/plain');
-  //       res.json(user);
-  //     })
-  //     .catch(err => next(err))
-  // })
+  try {
+    const users = await User.find(query);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.json(users);
+  } catch (err) {
+    next(err)
+  }
+})
+// .post((req, res, next) => {
+//   User.create(req.body)
+//     .then((user) => {
+//       res.statusCode = 200;
+//       res.setHeader('Content-Type', 'text/plain');
+//       res.json(user);
+//     })
+//     .catch(err => next(err))
+// })
   // .delete((req, res, next) => {
   //   User.deleteMany()
   //     .then(response => {
@@ -94,15 +94,16 @@ userRouter.route('/:userId')
       next(err)
     }
   })
-  .delete( async (req, res, next) => {
-    try {
-      const response = await User.findByIdAndDelete(req.params.userId);
-      res.setHeader('Content-Type', 'text/plain')
-      res.status(200).send(response);
-    } catch (err) {
-      next(err)
-    }
-  })
-
-
-  module.exports = userRouter;
+  .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    // only admin can perform this action
+    User.findByIdAndUpdate(req.params.reviewId,{
+      status: "Inactive"
+    }, { new: true })
+    .then(response => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(response);
+    })
+    .catch(err => next(err));
+});
+module.exports = userRouter;
