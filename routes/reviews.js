@@ -36,6 +36,7 @@ reviewRouter.route('/')
 .post((req, res, next) => {
     //need to verify current user is logged in
     //need to check if reviewed_user_id exists in author_id's contacts
+    //moderator?
     Review.create(req.body)
     .then(review => {
         res.statusCode = 200;

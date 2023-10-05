@@ -24,6 +24,6 @@ const userSchema = new Schema({
     timestamps: true
 });
 
-userSchema.plugin(passportLocalMongoose, { usernameField: "username" });
+userSchema.plugin(passportLocalMongoose, { usernameCaseInsensitive: true });
 
 module.exports = mongoose.model('User', userSchema);
