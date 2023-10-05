@@ -12,14 +12,14 @@ userRouter.route('/signup')
       req.body.password,
       async (err, user) => {
         if (err) {
+          console.log(err);
           res.statusCode = 500;
           res.setHeader('Content-Type', 'application/json');
           res.json({ err: err });
         } else {
+          console.log(`User ${user._id} successfully created!`);
           user.is_admin = false;// setting it again explicitly here so that no one should be able to set themselves as admin. Admin status we will always set manually from the backend
           try {
-            //make sure to import Profile model at the top
-            //you can use "new Profile" which will create a new instance of a Profile document which will include the save method.
             const profileInfo = new Profile({
               user: user._id,
               first_name: req.body.first_name,
