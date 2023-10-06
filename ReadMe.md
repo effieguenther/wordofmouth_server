@@ -138,10 +138,10 @@ ALL RETURNS ARE IN JSON FORMAT
     - returns the request
 - PUT 
     - auth: current user must = to_id
-    - body: { status } ('Approved' or 'Declined')
+    - body: { status: 'Approved' or 'Declined' }
     - if approved, to_id is added to from_id's contacts and vice versa
-    - returns the to_id user, from_id user, and the updated request
-    - if declined, nothing happens
+    - returns { success: true, request: {request} to_profile: {profile}, from_profile: {profile} }
+    - if declined, returns { success: true, request: {request} }
 
 ### /services
 - GET
