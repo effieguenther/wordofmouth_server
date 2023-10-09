@@ -95,6 +95,26 @@ ALL RETURNS ARE IN JSON FORMAT
     - body: {}
     - returns: { success: true, token: token, status: 'You are successfully logged in!' }
 
+### /profiles
+- GET
+    - auth: none
+    - body: {}
+    - returns { success: true, profiles: [{profile}, {profile}, ...] }
+- POST
+    - auth: none
+    - body: {profile}
+    - returns { succes: true, profile: {profile} }
+
+#### /profiles/:userId
+- GET
+    - auth: none
+    - body: {}
+    - returns { succes: true, profile: {profile} }
+- PUT
+    - auth: current user id must === profile.user
+    - body: { info to update }
+    - returns { success: true, profile: {profile} }
+
 ### /reviews
 - GET
     - auth: none

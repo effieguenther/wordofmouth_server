@@ -5,8 +5,9 @@ const passportLocalMongoose = require('passport-local-mongoose');//import passpo
 const userSchema = new Schema({
     authentication_method: {
         type: String,
-        enum:["google", "email-password"],
-        default: "email-password",
+        enum:["google", "username-password"],
+        //effie: on the front-end we will require either a phone number or email to be added to the profile for password recovery
+        default: "username-password",
         required: true
     },
     is_admin:{

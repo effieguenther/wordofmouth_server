@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 const requestSchema = new Schema({
     to_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'Profile',
         required: true
     },
     from_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'Profile',
         required: true
     },
     status: {

@@ -13,58 +13,68 @@ const filter_query = (req) => {
 }
 
 profileRouter.route('/')
-    .get((req, res, next) => {
-        query = filter_query(req);
-        Profile.find()
-            .then(profiles => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'text/plain');
-                res.json(profiles);
-            })
-            .catch(err => next(err))
+    .get(async (req, res, next) => {
+        try {
+            query = filter_query(req);
+            const profiles = await Profile.find()
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.json({success: true, profiles: profiles});
+        } catch (err) {
+            next(err);
+        }
     })
-    .post((req, res, next) => {
-        Profile.create(req.body)
-            .then((profile) => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'text/plain');
-                res.json(profile);
-            })
-            .catch(err => next(err))
+    .post(async (req, res, next) => {
+        try {
+            const profile = await Profile.create(req.body)
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.json({success: true, profile: profile});
+        } catch (err) {
+            next(err);
+        }
     })
-// .delete((req, res, next) => {
-//     Profile.deleteMany()
-//         .then(response => {
-//             res.statusCode = 200;
-//             res.setHeader('Content-Type', 'text/plain');
-//             res.json(response);
-//         })
-//         .catch(err => next(err))
-// })
+    .put((req, res) => {
+        res.statusCode = 403;
+        res.send('PUT operation not supported on /profiles')    })
+    .delete((req, res) => {
+        res.statusCode = 403;
+        res.send('DELETE operation not supported on /profiles')
+    })
 
 profileRouter.route('/:userId')
-    .get((req, res, next) => {
-        Profile.findOne({ user: req.params.userId })
+    .get(async (req, res, next) => {
+        try {
+            const profile = await Profile.findOne({ user: req.params.userId })
             .populate('services')
             .populate('contacts')
             .populate('address')
-            .then(profile => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'text/plain');
-                res.json(profile);
-            })
-            .catch(err => next(err))
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.json({success: true, profile: profile});
+        } catch (err) {
+            next(err);
+        }
     })
-    .put((req, res, next) => {
-        Profile.findOneAndUpdate({ user: req.params.userId },
-            { $set: req.body },
-            { new: true })
-            .then((profile) => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'text/plain');
-                res.json(profile);
-            })
-            .catch(err => next(err))
+    .post((req, res) => {
+        res.statusCode = 403;
+        res.send(`POST operation not supported on /profiles/${req.params.userId}`)
+    })
+    .put(async (req, res, next) => {
+        try {
+            const profile = await Profile.findOneAndUpdate({ user: req.params.userId },
+                { $set: req.body },
+                { new: true })
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.json({success: true, profile: profile});
+        } catch (err) {
+            next(err);
+        }
+    })
+    .delete((req, res) => {
+        res.statusCode = 403;
+        res.send(`DELETE operation not supported on /profiles/${req.params.userId}`) 
     })
 
 module.exports = profileRouter;
