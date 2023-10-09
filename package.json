@@ -27,5 +27,9 @@
   },
   "engines": {
     "node": "16"
-  }
+  },
+  "description": "- login with Google\r - sending emails/texts to users",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
 }
