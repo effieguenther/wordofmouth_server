@@ -62,6 +62,7 @@ userRouter.post('/login', cors.corsWithOptions, passport.authenticate('local', {
 
   // fetch profile details
   Profile.findOne({ "user": req.user._id })
+  .populate('services')
     .then(profile => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
