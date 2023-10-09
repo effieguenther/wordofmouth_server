@@ -77,4 +77,10 @@ profileRouter.route('/:userId')
         res.send(`DELETE operation not supported on /profiles/${req.params.userId}`) 
     })
 
+// profile.route('/:userId/address')
+//     .get()
+//     .post()
+//     .put()
+//     .delete()
+
 module.exports = profileRouter;
