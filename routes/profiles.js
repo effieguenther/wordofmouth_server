@@ -1,6 +1,9 @@
 const express = require('express');
 const Profile = require('../models/profile');
 const profileRouter = express.Router();
+const passport = require('passport');
+const authenticate = require('../authenticate');
+const cors = require('./cors');
 
 // extract any filters to be applied from the body of the request and construct query object
 const filter_query = (req) => {
@@ -11,6 +14,9 @@ const filter_query = (req) => {
     }
     return query;
 }
+profileRouter.options('*', cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+  });
 
 profileRouter.route('/')
     .get(async (req, res, next) => {
@@ -42,10 +48,10 @@ profileRouter.route('/')
         res.send('DELETE operation not supported on /profiles')
     })
 
-profileRouter.route('/:userId')
+profileRouter.route('/:profileId')
     .get(async (req, res, next) => {
         try {
-            const profile = await Profile.findOne({ user: req.params.userId })
+            const profile = await Profile.findOne({ _id: req.params.profileId })
             .populate('services')
             .populate('contacts')
             .populate('address')
@@ -56,25 +62,34 @@ profileRouter.route('/:userId')
             next(err);
         }
     })
-    .post((req, res) => {
+    .post(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
         res.statusCode = 403;
-        res.send(`POST operation not supported on /profiles/${req.params.userId}`)
+        res.send(`POST operation not supported on /profiles/${req.params.profileId}`)
     })
-    .put(async (req, res, next) => {
+    .put(cors.corsWithOptions, authenticate.verifyUser, async (req, res, next) => {
         try {
-            const profile = await Profile.findOneAndUpdate({ user: req.params.userId },
+            const profile = await Profile.findOneAndUpdate({ _id: req.params.profileId },
                 { $set: req.body },
                 { new: true })
+                console.log(req.params.profileId, req.body);
+
+
+            // reload the updated profile with strucuture populated
+            const updatedprofile = await Profile.findOne({ _id: req.params.profileId })
+            .populate('services')
+            .populate('contacts')
+            .populate('address')
+
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/plain');
-            res.json({success: true, profile: profile});
+            res.json({success: true, profile: updatedprofile});
         } catch (err) {
             next(err);
         }
     })
     .delete((req, res) => {
         res.statusCode = 403;
-        res.send(`DELETE operation not supported on /profiles/${req.params.userId}`) 
+        res.send(`DELETE operation not supported on /profiles/${req.params.profileId}`) 
     })
 
 // profile.route('/:userId/address')
