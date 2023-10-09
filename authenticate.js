@@ -30,7 +30,8 @@ exports.jwtPassport = passport.use(
             ///JWT payload is the decoded JWT payload
             //done is a callback that is written into jwt-passport
             console.log('JWT payload:', jwt_payload);
-            User.findOne({_id: jwt_payload._id}, (err, user) => {
+            User.findOne({_id: jwt_payload._id})
+            .then((user, err) => {
                 if (err) {
                     return done(err, false);
                 } else if (user) {

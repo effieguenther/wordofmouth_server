@@ -4,10 +4,14 @@ const Profile = require('../models/profile')
 const passport = require('passport');
 const authenticate = require('../authenticate');
 var userRouter = express.Router();
+const cors = require('./cors');
 
+userRouter.options('*', cors.corsWithOptions, (req, res) => {
+  res.sendStatus(200);
+});
 
 userRouter.route('/signup')
-  .post((req, res, next) => {
+  .post(cors.corsWithOptions, (req, res, next) => {
     User.register(
       new User({ username: req.body.username, is_admin: false }),
       req.body.password,
@@ -41,13 +45,38 @@ userRouter.route('/signup')
   })
 
 //Authenticating the user, being passed as middleware
-userRouter.post('/login', passport.authenticate('local', { session: false }), (req, res) => {
+userRouter.post('/login', cors.corsWithOptions, passport.authenticate('local', { session: false }), (req, res) => {
   const token = authenticate.getToken({ _id: req.user._id });
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ success: true, token: token, status: 'You are successfully logged in!' });
-});
 
+  // fetch profile details
+  Profile.findOne({ "user": req.user._id })
+  .populate('services')
+    .then(profile => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({
+        success: true,
+        token: token,
+        id: req.user._id,
+        status: 'You are successfully logged in!',
+        profile: profile
+      });
+    })
+});
+userRouter.get(
+  '/logout',
+  cors.corsWithOptions,
+  authenticate.verifyUser,
+  (req, res, next) => {
+      authenticate.getToken({ _id: req.user._id }, 0);
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({
+          success: true,
+          status: 'You have successfully logged out!'
+      });
+  }
+);
 userRouter.route('/')
 .get( async (req, res, next) => {
   const query = {}
@@ -96,14 +125,14 @@ userRouter.route('/:userId')
   })
   .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     // only admin can perform this action
-    User.findByIdAndUpdate(req.params.reviewId,{
+    User.findByIdAndUpdate(req.params.reviewId, {
       status: "Inactive"
     }, { new: true })
-    .then(response => {
+      .then(response => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(response);
-    })
-    .catch(err => next(err));
-});
+      })
+      .catch(err => next(err));
+  });
 module.exports = userRouter;
