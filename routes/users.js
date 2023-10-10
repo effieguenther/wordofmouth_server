@@ -10,10 +10,38 @@ userRouter.options('*', cors.corsWithOptions, (req, res) => {
   res.sendStatus(200);
 });
 
+const checkAuthenticationType = (username) => {
+  if (!username) { // check if field is empty
+    return 0;
+  } else if (!username.includes('@')) { // check if not an email id then check if a valid phone number
+    const regex = /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/i;
+    if ((!username || regex.test(username) === false)) {
+      return 0;
+    }
+    return "phone-password";
+  } else { // check if its valid email id
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(username)) {
+      return 0;
+    }
+    return "email-password";
+  }
+}
+
 userRouter.route('/signup')
   .post(cors.corsWithOptions, (req, res, next) => {
+
+    // check authentication type
+    const auth_type = checkAuthenticationType(req.body.username)
+    console.log(req.body.username, auth_type);
+    if ( auth_type === 0) {
+      err = new Error('Not Valid Username');
+      err.status = 404;
+      return next(err);
+    }
+
     User.register(
-      new User({ username: req.body.username, is_admin: false }),
+      new User({ username: req.body.username, is_admin: false, authentication_method: auth_type }),
       req.body.password,
       async (err, user) => {
         if (err) {
@@ -27,7 +55,9 @@ userRouter.route('/signup')
             const profileInfo = new Profile({
               user: user._id,
               first_name: req.body.first_name,
-              last_name: req.body.last_name
+              last_name: req.body.last_name,
+              email: (auth_type === "email-password") ? req.body.username : "",
+              phone: (auth_type === "phone-password") ? req.body.username : ""
             })
             const profile = await profileInfo.save();
             passport.authenticate('local')(req, res, () => {
@@ -50,8 +80,8 @@ userRouter.post('/login', cors.corsWithOptions, passport.authenticate('local', {
 
   // fetch profile details
   Profile.findOne({ "user": req.user._id })
-  .populate('contacts')
-  .populate('address')
+    .populate('contacts')
+    .populate('address')
     .then(profile => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
@@ -69,31 +99,31 @@ userRouter.get(
   cors.corsWithOptions,
   authenticate.verifyUser,
   (req, res, next) => {
-      authenticate.getToken({ _id: req.user._id }, 0);
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({
-          success: true,
-          status: 'You have successfully logged out!'
-      });
+    authenticate.getToken({ _id: req.user._id }, 0);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json({
+      success: true,
+      status: 'You have successfully logged out!'
+    });
   }
 );
 userRouter.route('/')
-.get( async (req, res, next) => {
-  const query = {}
-  const { status, is_admin } = req.body;
-  if (status)   { query.status = status     }
-  if (is_admin) { query.is_admin = is_admin }
+  .get(async (req, res, next) => {
+    const query = {}
+    const { status, is_admin } = req.body;
+    if (status) { query.status = status }
+    if (is_admin) { query.is_admin = is_admin }
 
-  try {
-    const users = await User.find(query);
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.json(users);
-  } catch (err) {
-    next(err)
-  }
-})
+    try {
+      const users = await User.find(query);
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/plain');
+      res.json(users);
+    } catch (err) {
+      next(err)
+    }
+  })
 // .post((req, res, next) => {
 //   User.create(req.body)
 //     .then((user) => {
@@ -103,18 +133,18 @@ userRouter.route('/')
 //     })
 //     .catch(err => next(err))
 // })
-  // .delete((req, res, next) => {
-  //   User.deleteMany()
-  //     .then(response => {
-  //       res.statusCode = 200;
-  //       res.setHeader('Content-Type', 'text/plain');
-  //       res.json(response);
-  //     })
-  //     .catch(err => next(err))
-  // })
+// .delete((req, res, next) => {
+//   User.deleteMany()
+//     .then(response => {
+//       res.statusCode = 200;
+//       res.setHeader('Content-Type', 'text/plain');
+//       res.json(response);
+//     })
+//     .catch(err => next(err))
+// })
 
 userRouter.route('/:userId')
-  .get( async (req, res, next) => {
+  .get(async (req, res, next) => {
     try {
       const user = await User.findById(req.params.userId);
       res.statusCode = 200;
