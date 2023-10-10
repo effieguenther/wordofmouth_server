@@ -16,7 +16,7 @@ const filter_query = (req) => {
 }
 profileRouter.options('*', cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
-  });
+});
 
 profileRouter.route('/')
     .get(async (req, res, next) => {
@@ -25,7 +25,7 @@ profileRouter.route('/')
             const profiles = await Profile.find()
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/plain');
-            res.json({success: true, profiles: profiles});
+            res.json({ success: true, profiles: profiles });
         } catch (err) {
             next(err);
         }
@@ -35,14 +35,15 @@ profileRouter.route('/')
             const profile = await Profile.create(req.body)
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/plain');
-            res.json({success: true, profile: profile});
+            res.json({ success: true, profile: profile });
         } catch (err) {
             next(err);
         }
     })
     .put((req, res) => {
         res.statusCode = 403;
-        res.send('PUT operation not supported on /profiles')    })
+        res.send('PUT operation not supported on /profiles')
+    })
     .delete((req, res) => {
         res.statusCode = 403;
         res.send('DELETE operation not supported on /profiles')
@@ -52,12 +53,12 @@ profileRouter.route('/:profileId')
     .get(async (req, res, next) => {
         try {
             const profile = await Profile.findOne({ _id: req.params.profileId })
-            .populate('services')
-            .populate('contacts')
-            .populate('address')
+                .populate('services')
+                .populate('contacts')
+                .populate('address')
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/plain');
-            res.json({success: true, profile: profile});
+            res.json({ success: true, profile: profile });
         } catch (err) {
             next(err);
         }
@@ -71,25 +72,56 @@ profileRouter.route('/:profileId')
             const profile = await Profile.findOneAndUpdate({ _id: req.params.profileId },
                 { $set: req.body },
                 { new: true })
-                console.log(req.params.profileId, req.body);
+            console.log(req.params.profileId, req.body);
 
 
             // reload the updated profile with strucuture populated
             const updatedprofile = await Profile.findOne({ _id: req.params.profileId })
-            .populate('services')
-            .populate('contacts')
-            .populate('address')
+                .populate('contacts')
+                .populate('address')
 
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/plain');
-            res.json({success: true, profile: updatedprofile});
+            res.json({ success: true, profile: updatedprofile });
         } catch (err) {
             next(err);
         }
     })
     .delete((req, res) => {
         res.statusCode = 403;
-        res.send(`DELETE operation not supported on /profiles/${req.params.profileId}`) 
+        res.send(`DELETE operation not supported on /profiles/${req.params.profileId}`)
+    })
+
+profileRouter.route('/:profileId/updateProfilePic')
+    .get(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
+        res.statusCode = 403;
+        res.send(`GET operation not supported on /profiles/${req.params.profileId}/updateProfilePic`)
+    })
+    .post(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
+        res.statusCode = 403;
+        res.send(`POST operation not supported on /profiles/${req.params.profileId}/updateProfilePic`)
+    })
+    .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
+        res.statusCode = 403;
+        res.send(`DELETE operation not supported on /profiles/${req.params.profileId}/updateProfilePic`)
+    })
+    .put(cors.corsWithOptions, authenticate.verifyUser, async (req, res, next) => {
+        try {
+            const profile = await Profile.findOneAndUpdate({ _id: req.params.profileId },
+                { profile_pic: req.body.profile_pic },
+                { new: true })
+
+            // reload the updated profile with strucuture populated
+            const updatedprofile = await Profile.findOne({ _id: req.params.profileId })
+                .populate('contacts')
+                .populate('address')
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/plain');
+            res.json({ success: true, profile: updatedprofile });
+        } catch (err) {
+            next(err);
+        }
     })
 
 // profile.route('/:profileId/address')
