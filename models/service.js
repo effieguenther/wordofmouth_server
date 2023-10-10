@@ -8,12 +8,10 @@ const subServiceSchema = new Schema({
         unique: true
     },
     image:{
-        type:String,
-        required:true
+        type:String
     },
     description: {
-        type: String,
-        required: true
+        type: String
     },
     sort_order: {
         type: Number,
@@ -31,8 +29,7 @@ const serviceSchema = new Schema({
         unique: true
     },
     image:{
-        type:String,
-        required:true
+        type:String
     },
     description: {
         type: String,

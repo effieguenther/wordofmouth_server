@@ -26,6 +26,18 @@ serviceRouter.route('/')
             })
             .catch(err => next(err))
     })
+    .post(
+        (req, res, next) => {
+            Service.create(req.body)
+                .then((service) => {
+                    console.log('Partner Created ', service);
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json(service);
+                })
+                .catch((err) => next(err));
+        }
+    )
 serviceRouter.route('/:serviceId')
     .get((req, res, next) => {
         Service.findById(req.params.serviceId)
