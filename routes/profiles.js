@@ -124,7 +124,7 @@ profileRouter.route('/:profileId/updateProfilePic')
         }
     })
 
-// profile.route('/:userId/address')
+// profile.route('/:profileId/address')
 //     .get()
 //     .post()
 //     .put()
