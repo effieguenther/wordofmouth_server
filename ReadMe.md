@@ -39,6 +39,7 @@ Profile (profiles)
 - contacts (array of ids)
 - images (array of strings)
 - profile picture
+- email
 - phone number
 - gender
 - status
@@ -114,6 +115,20 @@ ALL RETURNS ARE IN JSON FORMAT
     - auth: current user id must === profile.user
     - body: { info to update }
     - returns { success: true, profile: {profile} }
+
+### /workers
+- GET
+    - auth: none
+    - body: none
+    - returns { success: true, profiles: profiles }
+
+#### /workers/search/:keyword
+- GET
+    - auth: none
+    - body: { [ serviceId, serviceId, ... ] }
+    - GET /services/search/:keyword first to retrieve ids
+    - searches for profiles which match any of the services ids, or the keyword matches first/last name
+    - returns { success: true, profiles: profiles }
 
 ### /reviews
 - GET

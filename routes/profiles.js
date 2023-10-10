@@ -92,7 +92,7 @@ profileRouter.route('/:profileId')
         res.send(`DELETE operation not supported on /profiles/${req.params.profileId}`) 
     })
 
-// profile.route('/:userId/address')
+// profile.route('/:profileId/address')
 //     .get()
 //     .post()
 //     .put()
