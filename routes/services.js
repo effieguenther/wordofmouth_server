@@ -42,7 +42,6 @@ serviceRouter.route('/search/:keyword')
     .get(async (req, res, next) => {
         try {
             const regexKey = new RegExp(req.params.keyword, 'i'); //matches partial and case-insensitive
-            const serviceQuery = {'title': { $regex: regexKey } };
             // $unwind destructures the sub_service docs, $match queries them for a title match, and $project returns only the _id of the sub_service doc
             const subServices = await Service.aggregate([
                 { $unwind: '$sub_service' },
@@ -58,7 +57,7 @@ serviceRouter.route('/search/:keyword')
             ];
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
-            res.json({success: true, servicesIds: serviceIds});
+            res.json({success: true, serviceIds: serviceIds});
         } catch (err) {
             next(err);
         }

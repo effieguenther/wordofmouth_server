@@ -130,6 +130,12 @@ ALL RETURNS ARE IN JSON FORMAT
     - searches for profiles which match any of the services ids, or the keyword matches first/last name
     - returns { success: true, profiles: profiles }
 
+#### /workers/:serviceId
+- GET
+    - auth: none
+    - body: {}
+    - returns { success: true, profiles: [{profile}, {profile}, ...] }
+
 ### /reviews
 - GET
     - auth: none
@@ -183,6 +189,12 @@ ALL RETURNS ARE IN JSON FORMAT
     - auth: none
     - body: { filter_featured }
     - returns an array of services with its subservices
+
+#### /services/search/:keyword
+- GET
+    - auth: none
+    - body: {}
+    - returns { success: true, serviceIds: [serviceId, serviceId, ...] }
 
 #### /services/:serviceId
 - GET
