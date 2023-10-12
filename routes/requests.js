@@ -11,9 +11,9 @@ requestRouter.options('*', cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
 });
 
-requestRouter.route('/fetchRequests')
+requestRouter.route('/')
     // this will always be for logged in user, so we dont need to send user id
-    .post(cors.corsWithOptions, authenticate.verifyUser, async (req, res, next) => {
+    .get(cors.corsWithOptions, authenticate.verifyUser, async (req, res, next) => {
         try {
             await Profile.findOne({ "user": req.user._id })
                 .then(profile => {
