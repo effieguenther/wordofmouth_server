@@ -28,7 +28,11 @@ workerRouter.route('/')
     })
 
 workerRouter.route('/search/:keyword')
-    .get(async (req, res, next) => {
+    .get((req, res) => {
+        res.statusCode = 403;
+        res.send(`GET operation not supported on /workers/keyword/${req.params.keyword}`)
+    })
+    .post(async (req, res, next) => {
         try {
             const serviceIds = req.body;
             const keyword = req.params.keyword;
@@ -46,10 +50,6 @@ workerRouter.route('/search/:keyword')
         } catch (err) {
             next(err);
         }
-    })
-    .post((req, res) => {
-        res.statusCode = 403;
-        res.send(`POST operation not supported on /workers/keyword/${req.params.keyword}`)
     })
     .put((req, res) => {
         res.statusCode = 403;
