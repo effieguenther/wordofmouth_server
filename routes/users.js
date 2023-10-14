@@ -28,6 +28,17 @@ const checkAuthenticationType = (username) => {
   }
 }
 
+const getUserProfile = (userId)=>{
+    // fetch profile details
+    Profile.findOne({ "user": userId })
+    .populate('contacts')
+    .populate('address')
+    .then(profile => {
+      return profile;
+    });
+    return null;
+}
+
 userRouter.route('/signup')
   .post(cors.corsWithOptions, (req, res, next) => {
 
@@ -108,6 +119,22 @@ userRouter.get(
     });
   }
 );
+
+userRouter.get('/checkJWTtoken', cors.corsWithOptions, (req, res) => {
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+      if (err) {
+          return next(err);
+      }
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      if (!user) {
+          return res.json({ status: 'JWT invalid!', success: false, err: info });
+      } else {
+          return res.json({ status: 'JWT valid!', success: true, user: user });
+      }
+  })(req, res);
+});
+
 userRouter.route('/')
   .get(async (req, res, next) => {
     const query = {}
