@@ -30,7 +30,7 @@ Profile (profiles)
 - address (embedded schema)
     - address_line_1
     - address_line_2
-    - street
+    - address_line_3
     - city
     - country_code
     - latitude
@@ -39,6 +39,7 @@ Profile (profiles)
 - contacts (array of ids)
 - images (array of strings)
 - profile picture
+- rating
 - email
 - phone number
 - gender

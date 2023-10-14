@@ -13,13 +13,16 @@ requestRouter.options('*', cors.corsWithOptions, (req, res) => {
 
 requestRouter.route('/')
     // this will always be for logged in user, so we dont need to send user id
-    .get(cors.corsWithOptions, authenticate.verifyUser, async (req, res, next) => {
+    .get(cors.cors, authenticate.verifyUser, async (req, res, next) => {
         try {
             await Profile.findOne({ "user": req.user._id })
                 .then(profile => {
                     if (profile) {
                         console.log(profile._id);
-                        const query = { $or: [{ to_id: new ObjectId(profile._id) }, { from_id: new ObjectId(profile._id) }] }
+                        const query = { 
+                            $or: [{ to_id: new ObjectId(profile._id) }, { from_id: new ObjectId(profile._id) }],
+                            status: "Pending" 
+                        }
                         const requests = Request.aggregate([
                             {
                                 $match: query
@@ -36,6 +39,7 @@ requestRouter.route('/')
                                                 first_name: 1,
                                                 last_name: 1,
                                                 profile_pic: 1,
+                                                rating: 1
                                             }
                                         }
                                     ]
@@ -53,6 +57,7 @@ requestRouter.route('/')
                                                 first_name: 1,
                                                 last_name: 1,
                                                 profile_pic: 1,
+                                                rating: 1
                                             }
                                         }
                                     ]
@@ -63,7 +68,7 @@ requestRouter.route('/')
                             res.setHeader('Content-Type', 'application/json');
                             res.json(resultSet);
                         }).catch((err) => {
-                            next(error);
+                            next(err);
                         })
 
                     }
@@ -77,6 +82,7 @@ requestRouter.route('/')
 
 requestRouter.route('/')
     .post(cors.corsWithOptions, authenticate.verifyUser, async (req, res, next) => {
+        //to do: make sure they aren't contacts already
         try {
             const request = await Request.create(req.body);
             res.statusCode = 200;
@@ -97,7 +103,7 @@ requestRouter.route('/')
 
 
 requestRouter.route('/:requestId')
-    .get(async (req, res, next) => {
+    .get(cors.cors, async (req, res, next) => {
         try {
             const request = await Request.findById(req.params.requestId);
             res.statusCode = 200;
@@ -111,9 +117,10 @@ requestRouter.route('/:requestId')
         res.statusCode = 403;
         res.end(`POST operation not supported on /requests/${req.params.requestId}`);
     })
-    //need to verify that current user == to_id
-    .put(async (req, res, next) => {
+    //to do: verify that current user == to_id
+    .put(cors.corsWithOptions, authenticate.verifyUser, async (req, res, next) => {
         const { status } = req.body;
+        console.log(status);
         if (status === 'Approved') {
             try {
                 const request = await Request.findByIdAndUpdate(
@@ -121,26 +128,32 @@ requestRouter.route('/:requestId')
                     { status: 'Approved' },
                     { new: true }
                 );
-                const to_user = await Profile.findByIdAndUpdate(
-                    request.to_id,
-                    { $push: { contacts: request.from_id } },
-                    { new: true }
-                );
-                const from_user = await Profile.findByIdAndUpdate(
-                    request.from_id,
-                    { $push: { contacts: request.to_id } },
-                    { new: true }
-                );
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json({ success: true, request: request, to_profile: to_user, from_profile: from_user });
+                console.log('request', request)
+                if (request) {
+                    const to_user = await Profile.findByIdAndUpdate(
+                        request.to_id,
+                        { $push: { contacts: request.from_id } },
+                        { new: true }
+                    );
+                    const from_user = await Profile.findByIdAndUpdate(
+                        request.from_id,
+                        { $push: { contacts: request.to_id } },
+                        { new: true }
+                    );
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json({ success: true, request: request, to_profile: to_user, from_profile: from_user });
+                } else {
+                    res.statusCode = 500;
+                    res.end(`Unable to locate request ${req.params.requestId}`)
+                }
             } catch (err) {
                 next(err);
             }
         } else if (status === 'Declined') {
             const request = await Request.findByIdAndUpdate(
                 req.params.requestId,
-                { stauts: 'Declined' },
+                { status: 'Declined' },
                 { new: true }
             );
             res.statusCode = 200;
