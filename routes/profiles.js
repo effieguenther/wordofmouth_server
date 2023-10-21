@@ -107,6 +107,7 @@ profileRouter.route('/:profileId/updateProfilePic')
     })
     .put(cors.corsWithOptions, authenticate.verifyUser, async (req, res, next) => {
         try {
+            console.log(req.body.profile_pic);
             const profile = await Profile.findOneAndUpdate({ _id: req.params.profileId },
                 { profile_pic: req.body.profile_pic },
                 { new: true })
