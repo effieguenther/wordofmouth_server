@@ -9,6 +9,32 @@ reviewRouter.options('*', cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
   });
 
+
+reviewRouter.route('/')
+  .get(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
+    res.statusCode = 403;
+    res.end('GET operation not supported on /reviews');
+  })
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+      //need to check if reviewed_user_id exists in author_id's contacts
+      //moderator?
+      Review.create(req.body)
+      .then(review => {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.json(review);
+      })
+      .catch(err => next(err));
+  })
+  .put((req, res) => {
+      res.statusCode = 403;
+      res.end('PUT operation not supported on /reviews');
+  })
+  .delete((req, res) => {
+      res.statusCode = 403;
+      res.end('DELETE operation not supported on /reviews');
+  });
+
 // changed from get to post because get cannot send data in body and here we need to send filter parameters
 reviewRouter.route('/fetchReviews')
 .post(cors.corsWithOptions,(req, res, next) => {
@@ -42,28 +68,6 @@ reviewRouter.route('/fetchReviews')
         .catch(err => next(err));
     }
 })
-.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    //need to verify current user is logged in
-    //need to check if reviewed_user_id exists in author_id's contacts
-    //moderator?
-    Review.create(req.body)
-    .then(review => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(review);
-    })
-    .catch(err => next(err));
-})
-.put((req, res) => {
-    res.statusCode = 403;
-    res.end('PUT operation not supported on /reviews');
-})
-.delete((req, res) => {
-    res.statusCode = 403;
-    res.end('DELETE operation not supported on /reviews');
-});
-
-
 
 reviewRouter.route('/:reviewId')
 .get((req, res, next) => {
