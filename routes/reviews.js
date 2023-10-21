@@ -43,6 +43,7 @@ reviewRouter.route('/fetchReviews')
     if (filter_author_id) {
         const query = { author_id: new ObjectId(filter_author_id) }
         Review.find(query)
+        .populate('reviewed_user_id')
         .then(reviews => {
             res.status = 200;
             res.setHeader('Content-Type', 'application/json');
@@ -52,6 +53,7 @@ reviewRouter.route('/fetchReviews')
     } else if (filter_reviewed_user_id) {
         const query = { reviewed_user_id: new ObjectId(filter_reviewed_user_id)};
         Review.find(query)
+        .populate('author_id')
         .then(reviews => {
             res.status = 200;
             res.setHeader('Content-Type', 'application/json');
