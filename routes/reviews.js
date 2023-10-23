@@ -19,12 +19,15 @@ reviewRouter.route('/')
       //need to check if reviewed_user_id exists in author_id's contacts
       //moderator?
       Review.create(req.body)
-      .then(review => {
-          res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json(review);
-      })
-      .catch(err => next(err));
+        .then(review => {
+            return Review.populate(review, { path: 'author_id' });
+        })
+        .then(populatedReview => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(populatedReview);
+         })
+        .catch(err => next(err));
   })
   .put((req, res) => {
       res.statusCode = 403;
