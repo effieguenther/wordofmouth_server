@@ -1,3 +1,10 @@
+.vscode/
 node_modules
-./config.js
 ui-debug.log
+
+config.js
+data/wordofmouth_server/assets/wordofmouth-alpha-firebase-adminsdk-q5g3k-ca799a0efb.json
+assets/data/
+bin/www
+.firebaserc
+firebase.json
