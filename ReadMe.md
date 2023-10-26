@@ -1,28 +1,40 @@
-## Features
+# Word of Mouth Server
 
-- login with Google
-- sending emails/texts to users
+This is the backend code for Word of Mouth! It is a Node/Express app which connects to a MongoDB Atlas database. 
 
-## Schemas
+[Frontend code](https://github.com/sruthiravindra/wordofmouth)  
+[Live demo](https://wordofmouth-alpha.web.app/)
 
-Service (services)
+Mongoose ODM is utilized to enfore schemas on the documents.  
+Passport is used to authenticate users with Local and JWT strategies.
+
+## Schema/Models
+
+#### Service 
 - title
-- array of sub-services
+- image
+- description
+- featured
+- sort_order
+- timestamps
+- sub_service (embedded schema)
+    - title
+    - image
+    - description
+    - sort_order
+    - timestamps
 
-User (users)
+#### User
 - authentication_method
 - is_admin
 - status
-- first_name
-- last_name
-
 - username (passport-local-mongoose)
-- password (passport-local-mongoose)
-
+- salt (passport-local-mongoose)
+- hash (passport-local-mongoose)
 - timestamps
 
-Profile (profiles)
-- user_id
+#### Profile
+- user
 - first_name
 - last_name
 - is_worker
@@ -35,19 +47,18 @@ Profile (profiles)
     - country_code
     - latitude
     - longitude
-- services (array of ids)
-- contacts (array of ids)
+- services (array of service ids)
+- contacts (array of profile ids)
 - images (array of strings)
-- profile picture
-- rating
+- profile_pic (download URL string)
 - email
-- phone number
+- phone
+- rating
 - gender
 - status
-
 - timestamps
 
-Review (reviews)
+#### Review
 - author_id
 - reviewed_user_id
 - rating
@@ -55,59 +66,83 @@ Review (reviews)
 - review_text
 - timestamps
 
-Request (requests)
+#### Request
 - to_id
 - from_id
 - status
 - timestamps
 
-## Endpoints
+# Endpoints
 
-ALL RETURNS ARE IN JSON FORMAT
+## users
 
-### /users
+#### users/
 - GET
     - auth: none
     - body: { is_admin || status }
     - if present in body, users are filtered by is_admin or status
-    - returns an array of users 
-- POST
-    - auth: none
-    - body: { user }
-    - returns a newly created user 
+    - returns an array of users  
 
-#### /users/:userId
+#### users/:userId
 - GET
     - auth: none
     - body: {}
-    - returns the user
+    - returns an object with the user data
+- DELETE
+    - auth: verify user, verify admin
+    - finds the user and updates status to "Inactive"
+    - returns { response }
 
-#### /users/signup
+#### users/signup
 - POST
     - auth: none
-    - body: { username: String, password: String, firstname: Srting, lastname: String }
+    - body: { 
+        - username: String, 
+        - password: String, 
+        - first_name: Srting, 
+        - last_name: String }
     - password is encrypted with passport-local-mongoose plugin
     - user is created and saved
     - profile is created from the new user and saved
-    - returns { success: true, user: user, profile: profile }
+    - returns { success: true, user: {user}, profile: {profile} }
 
-#### /users/login
+#### users/login
 - POST
-    - auth: user exists
-    - body: {}
-    - returns: { success: true, token: token, status: 'You are successfully logged in!' }
+    - auth: passport authenticate local
+    - body: { username, password }
+    - returns: { 
+        - success: true, 
+        - token: token, 
+        - id: _id,
+        - status: 'You are successfully logged in!',
+        - profile: {profile} }
 
-### /profiles
+#### users/logout
+- GET
+    - auth: verify user
+    - body: {}
+    - destroys the JWT token
+    - returns { success: true, status: 'You have successfully logged out!' }
+
+#### users/checkJWTtoken
+- GET
+    - auth: passport authenticate JWT
+    - checks if the JWT token in req is valid
+    - returns { status: 'JWT valid!', success: true, user: {user} }
+
+
+## profiles
+#### profiles/
 - GET
     - auth: none
     - body: {}
     - returns { success: true, profiles: [{profile}, {profile}, ...] }
 - POST
     - auth: none
-    - body: {profile}
+    - body: { profile }
     - returns { succes: true, profile: {profile} }
 
-#### /profiles/:userId
+#### /profiles/:profileId
 - GET
     - auth: none
     - body: {}
@@ -117,13 +152,14 @@ ALL RETURNS ARE IN JSON FORMAT
     - body: { info to update }
     - returns { success: true, profile: {profile} }
 
-### /workers
+## workers
+#### workers/
 - GET
     - auth: none
     - body: none
     - returns { success: true, profiles: profiles }
 
-#### /workers/search/:keyword
+#### workers/search/:keyword
 - GET
     - auth: none
     - body: { [ serviceId, serviceId, ... ] }
@@ -131,76 +167,95 @@ ALL RETURNS ARE IN JSON FORMAT
     - searches for profiles which match any of the services ids, or the keyword matches first/last name
     - returns { success: true, profiles: profiles }
 
-#### /workers/:serviceId
+#### workers/:serviceId
 - GET
     - auth: none
     - body: {}
+    - finds worker profiles which contain the serviceId in services
     - returns { success: true, profiles: [{profile}, {profile}, ...] }
 
-### /reviews
-- GET
+
+## reviews
+#### reviews/
+- POST
+    - auth: verify user
+    - body: { review }
+    - returns { review }
+
+#### reviews/fetchReviews
+- POST
     - auth: none
     - body: { filter_author_id || filter_reviewed_user_id }
-    - returns an array of reviews
-- POST
-    - auth: current user must exist
-    - body: { review }
-    - reviewed_user_id must exist in contacts of current user
-    - returns the created review
+    - filters reviews based on author_id or reviewed_user_id
+    - returns { [{review}, {review}, ...] }
 
-#### /reviews/:reviewId
+#### reviews/:reviewId
 - GET
     - auth: none
     - body: {}
-    - returns the Review
+    - returns: { review }
 - PUT 
     - auth: author_id must = current user
     - body: { rating: Number || review_title: String || review_text: String }
-    - returns updated Review
+    - updates the review
+    - returns: { review }
 - DELETE 
     - auth: author_id must = current user
     - body: {}
-    - returns status
+    - returns { response }
 
-### /requests
+
+## requests
+#### requests/
 - GET
-    - auth: current user must exist
-    - body: { filter_to || filter_from }
-    - returns array of Requests
+    - auth: verify user
+    - body: {}
+    - uses the userId from JWT token to filter reviews
+    - will find all requests where userId matches to_id or from_id 
+    - only finds requests where status is "Pending"
+    - populates to_id into to_users array
+    - populates from_id into from_users array
+    - returns: { [{request}, {request}, ...] }
 - POST
-    - auth: current user must exist
+    - auth: verify user
     - body: { request }
     - the the to_id must not already exist in the current user's contacts
-    - returns the created request
+    - returns: { request }
 
-#### /requests/:requestId
+#### requests/:requestId
 - GET
     - auth: none
     - body: {}
-    - returns the request
+    - returns: { request }
 - PUT 
-    - auth: current user must = to_id
-    - body: { status: 'Approved' or 'Declined' }
+    - auth: verify user, req.user._id === to_id
+    - body: { status: 'Approved' || 'Declined' }
     - if approved, to_id is added to from_id's contacts and vice versa
-    - returns { success: true, request: {request} to_profile: {profile}, from_profile: {profile} }
+    - if approved, returns: { success: true, request: {request} to_profile: {profile}, from_profile: {profile} }
     - if declined, returns { success: true, request: {request} }
 
-### /services
+## services
+#### services/
 - GET
     - auth: none
     - body: { filter_featured }
-    - returns an array of services with its subservices
+    - returns: { [{service}, {service}, ...] }
 
-#### /services/search/:keyword
+#### services/search/:keyword
 - GET
     - auth: none
     - body: {}
+    - queries service and sub_service titles for matches to :keyword
     - returns { success: true, serviceIds: [serviceId, serviceId, ...] }
 
-#### /services/:serviceId
+#### services/:serviceId
 - GET
-    - returns a service with its subservices for the given service Id
+    - auth: none
+    - body: {}
+    - returns: { service }
 
-#### /services/:serviceId/subservice
+#### services/:serviceId/subservice
 - GET
-    - returns the sub services for the given service Id
+    - auth: none
+    - body: {}
+    - returns: { [{sub_service}, {sub_service}, ...] }
