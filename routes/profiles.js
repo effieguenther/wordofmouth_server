@@ -53,9 +53,6 @@ profileRouter.route('/:profileId')
     .get(async (req, res, next) => {
         try {
             const profile = await Profile.findOne({ _id: req.params.profileId })
-                .populate('services')
-                .populate('contacts')
-                .populate('address')
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/plain');
             res.json({ success: true, profile: profile });
